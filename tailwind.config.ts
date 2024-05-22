@@ -75,12 +75,12 @@ const config: Config = {
         extend: {
             colors: {
                 'white-1': '#F8F8F8',
-                'grey-1': '#616161',
+                'grey-1': '#434656',
                 'grey-2': '#E5E7EB',
-                'blue-1': '#005EBE',
-                'blue-2': '#E9F5FE',
+                'blue-1': '#435BFF',
+                'blue-2': '#F3ECFF',
                 'blue-3': '#F5F7F9',
-                'red-1': '#FF0000',
+                'red-1': '#FF4898',
             },
         },
     },
