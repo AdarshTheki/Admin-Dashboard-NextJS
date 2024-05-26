@@ -19,3 +19,9 @@ export const connectToDB = async (): Promise<void> => {
         console.log(err);
     }
 };
+
+export const header = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
