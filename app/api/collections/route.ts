@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { connectToDB, header } from '@/lib/mongoDB';
+import { connectToDB } from '@/lib/mongoDB';
 import Collection from '@/models/Collection';
 
 export const POST = async (req: NextRequest) => {
@@ -49,9 +49,13 @@ export const GET = async () => {
 
         const collections = await Collection.find().sort({ createdAt: 'desc' });
 
-        return new NextResponse(JSON.stringify(collections), {
+        return NextResponse.json(collections, {
             status: 200,
-            headers: header,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET',
+                'Access-Control-Allow-Headers': 'Content-Type',
+            },
         });
     } catch (err: any) {
         console.log('[collections_GET]', err?.message);

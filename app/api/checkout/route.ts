@@ -1,12 +1,21 @@
-import { header } from '@/lib/mongoDB';
 import stripe from '@/lib/stripe';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function OPTIONS() {
-    return NextResponse.json({}, { headers: header });
+    return NextResponse.json(
+        {},
+        {
+            status: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET',
+                'Access-Control-Allow-Headers': 'Content-Type',
+            },
+        }
+    );
 }
 
-export async function POST(req: NextRequest, res:NextResponse) {
+export async function POST(req: NextRequest, res: NextResponse) {
     try {
         const { cartItems, customer } = await req.json();
 
@@ -45,6 +54,7 @@ export async function POST(req: NextRequest, res:NextResponse) {
         });
 
         return NextResponse.json(session, {
+            status: 200,
             headers: {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',

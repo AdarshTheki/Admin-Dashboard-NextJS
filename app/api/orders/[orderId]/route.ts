@@ -1,7 +1,7 @@
 import Customer from '@/models/Customer';
 import Order from '@/models/Order';
 import Product from '@/models/Product';
-import { connectToDB, header } from '@/lib/mongoDB';
+import { connectToDB } from '@/lib/mongoDB';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const GET = async (req: NextRequest, { params }: { params: { orderId: string } }) => {
@@ -20,7 +20,17 @@ export const GET = async (req: NextRequest, { params }: { params: { orderId: str
 
         const customer = await Customer.findOne({ clerkId: orderDetail.customerClerkId });
 
-        return NextResponse.json({ orderDetail, customer }, { status: 200, headers: header });
+        return NextResponse.json(
+            { orderDetail, customer },
+            {
+                status: 200,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                },
+            }
+        );
     } catch (error: any) {
         console.log('[orderId_GET]', error?.message);
         return new NextResponse('Internal Sever Error', { status: 500 });
