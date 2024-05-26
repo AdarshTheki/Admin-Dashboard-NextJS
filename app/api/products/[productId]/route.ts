@@ -23,7 +23,7 @@ export const GET = async (req: NextRequest, { params }: { params: { productId: s
         return NextResponse.json(product, {
             status: 200,
             headers: {
-                'Access-Control-Allow-Origin': `${process.env.ECOMMERCE_STORE_URL}`,
+                'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET',
                 'Access-Control-Allow-Headers': 'Content-Type',
             },
