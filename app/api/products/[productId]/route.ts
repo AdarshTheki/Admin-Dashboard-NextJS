@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import Collection from '@/models/Collection';
 import Product from '@/models/Product';
-import { connectToDB, header } from '@/lib/mongoDB';
+import { connectToDB } from '@/lib/mongoDB';
 
 export const GET = async (req: NextRequest, { params }: { params: { productId: string } }) => {
     try {
@@ -20,7 +20,14 @@ export const GET = async (req: NextRequest, { params }: { params: { productId: s
             });
         }
 
-        return NextResponse.json(product, { status: 200, headers: header });
+        return NextResponse.json(product, {
+            status: 200,
+            headers: {
+                'Access-Control-Allow-Origin': `${process.env.ECOMMERCE_STORE_URL}`,
+                'Access-Control-Allow-Methods': 'GET',
+                'Access-Control-Allow-Headers': 'Content-Type',
+            },
+        });
     } catch (error: any) {
         console.log('[productId_GET]', error.message);
         return new NextResponse('Internal Server Error', { status: 500 });
