@@ -1,15 +1,15 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { connectToDB } from '@/lib/mongoDB';
-import Collection from '@/lib/models/Collection';
+import { connectToDB, header } from '@/lib/mongoDB';
+import Collection from '@/models/Collection';
 
 export const POST = async (req: NextRequest) => {
     try {
         const { userId } = auth();
 
         if (!userId) {
-            return new NextResponse('UnAuthorized', { status: 403 });
+            return new NextResponse(JSON.stringify({ message: 'UnAuthorized' }), { status: 403 });
         }
 
         await connectToDB();
@@ -18,11 +18,15 @@ export const POST = async (req: NextRequest) => {
         const existingCollection = await Collection.findOne({ title });
 
         if (existingCollection) {
-            return new NextResponse('Collection already exists', { status: 400 });
+            return new NextResponse(JSON.stringify({ message: 'Collection already exists' }), {
+                status: 400,
+            });
         }
 
         if (!title || !image) {
-            return new NextResponse('Title and image are required', { status: 400 });
+            return new NextResponse(JSON.stringify({ message: 'Title and image are required' }), {
+                status: 400,
+            });
         }
         const newCollection = await Collection.create({
             title,
@@ -33,8 +37,8 @@ export const POST = async (req: NextRequest) => {
         await newCollection.save();
 
         return NextResponse.json(newCollection, { status: 200 });
-    } catch (error) {
-        console.log('[collection_POST]', error);
+    } catch (error: any) {
+        console.log('[collection_POST]', error?.message);
         return new NextResponse('Internal Server Error', { status: 500 });
     }
 };
@@ -45,9 +49,12 @@ export const GET = async () => {
 
         const collections = await Collection.find().sort({ createdAt: 'desc' });
 
-        return NextResponse.json(collections, { status: 200 });
-    } catch (err) {
-        console.log('[collections_GET]', err);
+        return new NextResponse(JSON.stringify(collections), {
+            status: 200,
+            headers: header,
+        });
+    } catch (err: any) {
+        console.log('[collections_GET]', err?.message);
         return new NextResponse('Internal Server Error', { status: 500 });
     }
 };

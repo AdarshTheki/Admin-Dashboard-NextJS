@@ -1,8 +1,9 @@
-import Collection from '@/lib/models/Collection';
-import Product from '@/lib/models/Product';
-import { connectToDB } from '@/lib/mongoDB';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+
+import Collection from '@/models/Collection';
+import Product from '@/models/Product';
+import { connectToDB, header } from '@/lib/mongoDB';
 
 export const GET = async (req: NextRequest, { params }: { params: { collectionId: string } }) => {
     try {
@@ -11,12 +12,17 @@ export const GET = async (req: NextRequest, { params }: { params: { collectionId
         let collection = await Collection.findById(params.collectionId);
 
         if (!collection) {
-            return new NextResponse('Collection Not Found', { status: 404 });
+            return new NextResponse(JSON.stringify({ message: 'Collection Not Found' }), {
+                status: 404,
+            });
         }
 
-        return NextResponse.json(collection, { status: 200 });
-    } catch (error) {
-        console.log('[Collections_GET]', error);
+        return new NextResponse(JSON.stringify(collection), {
+            status: 200,
+            headers: header,
+        });
+    } catch (error: any) {
+        console.log('[Collections_GET]', error?.message);
         return new NextResponse('Internal Server Error', { status: 500 });
     }
 };
@@ -25,19 +31,23 @@ export const POST = async (req: NextRequest, { params }: { params: { collectionI
     try {
         const { userId } = auth();
         if (!userId) {
-            return new NextResponse('Unauthorized', { status: 401 });
+            return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
         }
         await connectToDB();
 
         let collection = await Collection.findById(params.collectionId);
         if (!collection) {
-            return new NextResponse('collection not found', { status: 401 });
+            return new NextResponse(JSON.stringify({ message: 'collection not found' }), {
+                status: 401,
+            });
         }
 
         const { title, image, description } = await req.json();
 
         if (!title || !image) {
-            return new NextResponse('Title or Image are required', { status: 401 });
+            return new NextResponse(JSON.stringify({ message: 'Title or Image are required' }), {
+                status: 401,
+            });
         }
 
         collection = await Collection.findByIdAndUpdate(
@@ -47,8 +57,8 @@ export const POST = async (req: NextRequest, { params }: { params: { collectionI
         );
 
         return NextResponse.json(collection, { status: 200 });
-    } catch (error) {
-        console.log('[Collections_POST]', error);
+    } catch (error: any) {
+        console.log('[Collections_POST]', error?.message);
         return new NextResponse('Internal Server Error', { status: 500 });
     }
 };
@@ -61,7 +71,7 @@ export const DELETE = async (
         const { userId } = auth();
 
         if (!userId) {
-            return new NextResponse('Unauthorized', { status: 401 });
+            return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
         }
 
         await connectToDB();
@@ -73,9 +83,11 @@ export const DELETE = async (
             { $pull: { collections: params.collectionId } }
         );
 
-        return new NextResponse('collection is deleted', { status: 200 });
-    } catch (error) {
-        console.log('[Collections_DELETE]', error);
+        return new NextResponse(JSON.stringify({ message: 'collection is deleted' }), {
+            status: 200,
+        });
+    } catch (error: any) {
+        console.log('[Collections_DELETE]', error?.message);
         return new NextResponse('Internal Server Error', { status: 500 });
     }
 };

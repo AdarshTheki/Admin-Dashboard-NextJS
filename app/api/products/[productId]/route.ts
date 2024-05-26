@@ -1,8 +1,9 @@
-import Collection from '@/lib/models/Collection';
-import Product from '@/lib/models/Product';
-import { connectToDB } from '@/lib/mongoDB';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+
+import Collection from '@/models/Collection';
+import Product from '@/models/Product';
+import { connectToDB, header } from '@/lib/mongoDB';
 
 export const GET = async (req: NextRequest, { params }: { params: { productId: string } }) => {
     try {
@@ -19,16 +20,9 @@ export const GET = async (req: NextRequest, { params }: { params: { productId: s
             });
         }
 
-        return new NextResponse(JSON.stringify(product), {
-            status: 200,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET',
-                'Access-Control-Allow-Headers': 'Content-Type',
-            },
-        });
-    } catch (error) {
-        console.log('[productId_GET]', error);
+        return NextResponse.json(product, { status: 200, headers: header });
+    } catch (error: any) {
+        console.log('[productId_GET]', error.message);
         return new NextResponse('Internal Server Error', { status: 500 });
     }
 };
@@ -131,24 +125,24 @@ export const DELETE = async (req: NextRequest, { params }: { params: { productId
 
         await connectToDB();
 
-         const product = await Product.findById(params.productId);
+        const product = await Product.findById(params.productId);
 
-         if (!product) {
-             return new NextResponse(JSON.stringify({ message: 'Product not found' }), {
-                 status: 404,
-             });
-         }
+        if (!product) {
+            return new NextResponse(JSON.stringify({ message: 'Product not found' }), {
+                status: 404,
+            });
+        }
 
-         await Product.findByIdAndDelete(product._id);
+        await Product.findByIdAndDelete(product._id);
 
-         // Update collections
-         await Promise.all(
-             product.collections.map((collectionId: string) =>
-                 Collection.findByIdAndUpdate(collectionId, {
-                     $pull: { products: product._id },
-                 })
-             )
-         );
+        // Update collections
+        await Promise.all(
+            product.collections.map((collectionId: string) =>
+                Collection.findByIdAndUpdate(collectionId, {
+                    $pull: { products: product._id },
+                })
+            )
+        );
 
         return new NextResponse(JSON.stringify({ message: 'Product deleted' }), {
             status: 200,
@@ -158,3 +152,5 @@ export const DELETE = async (req: NextRequest, { params }: { params: { productId
         return new NextResponse('Internal Server Error', { status: 500 });
     }
 };
+
+export const dynamic = 'force-dynamic';
