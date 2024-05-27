@@ -27,13 +27,12 @@ const OrderDetail = ({ params }: { params: { orderId: string } }) => {
         getOrderDetails();
     }, []);
 
-    
     if (loading) return <Loader />;
-    
+
     let address: string[] = Object.values(orderDetails?.shippingAddress);
-  
+
     return (
-        <div className='flex flex-col p-10 gap-5'>
+        <div className='flex flex-col gap-5 sm:px-8 px-2 py-10'>
             <p className='text-base-bold'>
                 Order ID: <span className='text-base-medium'>{orderDetails._id}</span>
             </p>

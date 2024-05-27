@@ -81,7 +81,7 @@ const CollectionForm: React.FC<CollectionFormProps> = ({ initialData }) => {
     return loading ? (
         <Loader />
     ) : (
-        <div className='sm:p-10 p-5'>
+        <div className='sm:px-8 px-2 py-10'>
             {initialData ? (
                 <div className='flex items-center justify-between'>
                     <p className='sm:text-heading2-bold text-heading3-bold'>Edit Collection</p>

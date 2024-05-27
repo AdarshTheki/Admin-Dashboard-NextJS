@@ -21,7 +21,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, onRemove, value }) 
                 {value.map((url) => (
                     <div key={url} className='relative w-[200px] h-[200px]'>
                         <div className='absolute top-1 right-1 z-10'>
-                           <Button type='button' className='bg-red-1 hover:bg-red-1/90 h-[40px] w-[40px] p-0 flex items-center rounded-full'>
+                            <Button
+                                onClick={() => onRemove(url)}
+                                type='button'
+                                className='bg-red-1 hover:bg-red-1/90 h-[40px] w-[40px] p-0 flex items-center rounded-full'>
                                 <Trash className='text-white font-bold h-5 w-5' />
                             </Button>
                         </div>
@@ -30,6 +33,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, onRemove, value }) 
                             width={200}
                             height={200}
                             alt='collection'
+                            placeholder='blur'
                             className='object-cover rounded-lg border'
                         />
                     </div>

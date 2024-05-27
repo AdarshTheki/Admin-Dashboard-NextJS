@@ -9,9 +9,9 @@ const CustomerPage = async () => {
     const customers = await Customer.find().exec();
 
     return (
-        <div className='px-10 py-5'>
-            <p className='text-heading2-bold'>Customers</p>
-            <Separator className='bg-grey-1 my-5' />
+        <div className='sm:px-8 px-2 py-10'>
+            <p className='sm:text-heading2-bold text-heading3-bold'>Customers</p>
+            <Separator className='bg-grey-2 my-5' />
             <DataTable columns={columns} data={customers} searchKey='name' />
         </div>
     );

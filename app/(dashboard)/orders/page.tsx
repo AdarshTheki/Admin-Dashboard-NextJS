@@ -30,9 +30,9 @@ const Orders = () => {
     return loading ? (
         <Loader />
     ) : (
-        <div className='sm:px-10 px-2 py-5'>
-            <p className='text-heading2-bold'>Orders</p>
-            <Separator className='bg-grey-1 my-5' />
+        <div className='sm:px-8 px-2 py-10'>
+            <p className='sm:text-heading2-bold text-heading3-bold'>Orders</p>
+            <Separator className='bg-grey-2 my-4' />
             <DataTable columns={columns} data={orders} searchKey='_id' />
         </div>
     );
