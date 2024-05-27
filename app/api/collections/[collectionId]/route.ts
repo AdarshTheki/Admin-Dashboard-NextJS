@@ -9,7 +9,10 @@ export const GET = async (req: NextRequest, { params }: { params: { collectionId
     try {
         await connectToDB();
 
-        let collection = await Collection.findById(params.collectionId);
+        let collection = await Collection.findById(params.collectionId).populate({
+            path: 'products',
+            model: Product,
+        });
 
         if (!collection) {
             return new NextResponse(JSON.stringify({ message: 'Collection Not Found' }), {

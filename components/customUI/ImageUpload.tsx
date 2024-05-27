@@ -29,7 +29,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, onRemove, value }) 
                             </Button>
                         </div>
                         <Image
-                            src={url}
+                            src={url || '/placeholder.jpg'}
                             width={200}
                             height={200}
                             alt='collection'
