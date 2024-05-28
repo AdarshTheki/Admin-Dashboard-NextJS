@@ -1,36 +1,22 @@
-'use client'
-
-import { useEffect, useState } from 'react';
-
-import Loader from '@/components/customUI/Loader';
 import CollectionForm from '@/components/collections/CollectionForm';
 
-const CollectionId = ({ params }: { params: { collectionId: string } }) => {
-    const [loading, setLoading] = useState(false);
-    const [collection, setCollection] = useState<CollectionType | null>(null);
+const CollectionId = async ({ params }: { params: { collectionId: string } }) => {
+    try {
+        const res = await fetch(`/api/collections/${params.collectionId}`);
+        const collection = await res.json();
 
-    const getCollectionDetails = async () => {
-        try {
-            setLoading(true);
-            const res = await fetch(`/api/collections/${params.collectionId}`, { method: 'GET' });
-            const data = await res.json();
-            setCollection(data);
-        } catch (error) {
-            console.log('collection_GET', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        getCollectionDetails();
-    }, []);
-
-    return loading ? (
-        <Loader />
-    ) : (
-        <CollectionForm initialData={collection}/>
-    );
+        return <CollectionForm initialData={collection} />;
+    } catch (error: any) {
+        console.error('Error fetching collection:', error?.message);
+        return (
+            <div className='sm:px-8 px-2 py-10'>
+                <p className='sm:text-heading2-bold text-heading3-bold'>Error</p>
+                <p>Failed to load collection. Please try again later.</p>
+            </div>
+        );
+    }
 };
+
+export const dynamic = 'force-dynamic';
 
 export default CollectionId;
