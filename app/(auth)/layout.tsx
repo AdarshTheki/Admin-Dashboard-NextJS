@@ -7,9 +7,8 @@ import '../globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Admin Auth',
-    description:
-        'Admin Auth to managing e-commerce platform using Next.js, TypeScript, Stripe, and MERN stack.',
+    title: 'Adarsh - Admin Auth',
+    description: "Admin Auth to manage Adarsh's data",
 };
 
 export default function RootLayout({

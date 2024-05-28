@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { connectToDB, getCorsHeaders } from '@/lib/mongoDB';
+import { connectToDB } from '@/lib/mongoDB';
 import Collection from '@/models/Collection';
 
 export const POST = async (req: NextRequest) => {
@@ -47,9 +47,16 @@ export const GET = async () => {
     try {
         await connectToDB();
 
-        const newCollections = await Collection.find().sort({ createdAt: 'desc' });
+        const collections = await Collection.find().sort({ createdAt: 'desc' });
 
-        return NextResponse.json(newCollections, { status: 200, headers: getCorsHeaders() });
+        return NextResponse.json(collections, {
+            status: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET',
+                'Access-Control-Allow-Headers': 'Content-Type',
+            },
+        });
     } catch (err: any) {
         console.log('[collections_GET]', err?.message);
         return new NextResponse('Internal Server Error', { status: 500 });

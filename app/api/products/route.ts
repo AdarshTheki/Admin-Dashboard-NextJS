@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { connectToDB, getCorsHeaders } from '@/lib/mongoDB';
+import { connectToDB } from '@/lib/mongoDB';
 import Product from '@/models/Product';
 import Collection from '@/models/Collection';
 
@@ -74,7 +74,14 @@ export const GET = async (req: NextRequest) => {
             .sort({ createdAt: 'desc' })
             .populate({ path: 'collections', model: Collection });
 
-        return NextResponse.json(products, { status: 200, headers: getCorsHeaders() });
+        return NextResponse.json(products, {
+            status: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET',
+                'Access-Control-Allow-Headers': 'Content-Type',
+            },
+        });
     } catch (err: any) {
         console.log('[products_GET]', err.message);
         return new NextResponse('Internal Error', { status: 500 });

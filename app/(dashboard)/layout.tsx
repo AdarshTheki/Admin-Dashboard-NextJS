@@ -10,9 +10,8 @@ import { ToasterProvider } from '@/lib/ToasterProvider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Admin Dashboard',
-    description:
-        'Admin dashboard for managing e-commerce platform using Next.js, TypeScript, Stripe, and MERN stack.',
+    title: 'Adarsh - Admin Dashboard',
+    description: "Admin dashboard to manage Adarsh's data",
 };
 
 export default function RootLayout({

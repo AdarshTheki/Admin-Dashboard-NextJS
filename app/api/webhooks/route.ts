@@ -40,7 +40,9 @@ export const POST = async (req: NextRequest) => {
                 expand: ['line_items.data.price.product'],
             });
 
-            const orderItems = retrieveSession?.line_items?.data?.map((item: any) => {
+            const lineItems = await retrieveSession?.line_items?.data;
+
+            const orderItems = lineItems?.map((item: any) => {
                 return {
                     product: item.price.product.metadata.productId,
                     color: item.price.product.metadata.color || 'N/A',

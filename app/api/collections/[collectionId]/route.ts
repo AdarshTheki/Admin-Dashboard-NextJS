@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import Collection from '@/models/Collection';
 import Product from '@/models/Product';
-import { connectToDB, getCorsHeaders } from '@/lib/mongoDB';
+import { connectToDB } from '@/lib/mongoDB';
 
 export const GET = async (req: NextRequest, { params }: { params: { collectionId: string } }) => {
     try {
@@ -20,7 +20,14 @@ export const GET = async (req: NextRequest, { params }: { params: { collectionId
             });
         }
 
-        return NextResponse.json(collection, { status: 200, headers: getCorsHeaders() });
+        return NextResponse.json(collection, {
+            status: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET',
+                'Access-Control-Allow-Headers': 'Content-Type',
+            },
+        });
     } catch (error: any) {
         console.log('[Collections_GET]', error?.message);
         return new NextResponse('Internal Server Error', { status: 500 });

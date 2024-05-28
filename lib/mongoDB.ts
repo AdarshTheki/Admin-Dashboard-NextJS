@@ -20,9 +20,8 @@ export const connectToDB = async (): Promise<void> => {
     }
 };
 
-// Function to generate CORS headers
-export const getCorsHeaders = () => ({
+export const header = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET',
-    'Access-Control-Allow-Headers': 'Content-Type',
-});
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};

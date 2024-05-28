@@ -1,3 +1,5 @@
+'use client'
+
 import ProductForm from "@/components/products/ProductForm"
 
 const CreateProduct = () => {

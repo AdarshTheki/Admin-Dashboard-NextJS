@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 
 import Customer from '@/models/Customer';
 import Order from '@/models/Order';
-import { connectToDB, getCorsHeaders } from '@/lib/mongoDB';
+import { connectToDB } from '@/lib/mongoDB';
 
 export const GET = async (req: NextRequest) => {
     try {
@@ -24,7 +24,14 @@ export const GET = async (req: NextRequest) => {
             })
         );
 
-        return NextResponse.json(orderDetail, { status: 200, headers: getCorsHeaders() });
+        return NextResponse.json(orderDetail, {
+            status: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET',
+                'Access-Control-Allow-Headers': 'Content-Type',
+            },
+        });
     } catch (error: any) {
         console.log('[orders_GET]', error?.message);
         return new NextResponse('Internal Sever Error', { status: 500 });
