@@ -33,7 +33,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, onRemove, value }) 
                             width={200}
                             height={200}
                             alt='collection'
-                            placeholder='blur'
                             className='object-cover rounded-lg border'
                         />
                     </div>

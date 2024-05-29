@@ -70,8 +70,9 @@ export const GET = async (req: NextRequest) => {
     try {
         await connectToDB();
 
-        const products = await Product.find().sort({ createdAt: 'desc' });
-        // .populate({ path: 'collections', model: Collection });
+        const products = await Product.find()
+            .sort({ createdAt: 'desc' })
+            .populate({ path: 'collections', model: Collection });
 
         return NextResponse.json(products, {
             status: 200,
