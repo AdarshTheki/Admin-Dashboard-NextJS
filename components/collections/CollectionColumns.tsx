@@ -10,7 +10,9 @@ export const columns: ColumnDef<CollectionType>[] = [
         accessorKey: 'title',
         header: 'Title',
         cell: ({ row }) => (
-            <Link href={`/collections/${row.original._id}`} className='hover:text-blue-1'>
+            <Link
+                href={`/collections/${row.original._id}`}
+                className='hover:text-blue-1 capitalize'>
                 {row.original.title}
             </Link>
         ),

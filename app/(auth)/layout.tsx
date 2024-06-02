@@ -7,8 +7,9 @@ import '../globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Adarsh - Admin Auth',
-    description: "Admin Auth to manage Adarsh's data",
+    title: 'Admin Auth',
+    description:
+        "This e-commerce app, built using the MERN stack, offers a comprehensive platform for efficient data handling. With a user-friendly interface and robust functionality, our app ensures hassle-free administration of Adarsh's data.",
 };
 
 export default function RootLayout({

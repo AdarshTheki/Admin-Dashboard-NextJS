@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Collection from '@/models/Collection';
 import Product from '@/models/Product';
 import { connectToDB } from '@/lib/mongoDB';
+import mongoose, { ObjectId } from 'mongoose';
 
 export const GET = async (req: NextRequest, { params }: { params: { productId: string } }) => {
     try {
@@ -68,32 +69,45 @@ export const POST = async (req: NextRequest, { params }: { params: { productId: 
             });
         }
 
-        const addedCollections = collections.filter(
-            (collectionId: string) => !product.collections.includes(collectionId)
-        );
-        // included in new data, but not included in the previous data
+        // convert object into string
+        const productCollections = product?.collections?.map((i: any) => i?.toString());
 
-        const removedCollections = product.collections.filter(
-            (collectionId: string) => !collections.includes(collectionId)
+        // included in new data, but not included in the previous data
+        const addedCollections = collections.filter(
+            (id: string) => !productCollections.includes(id)
         );
+
         // included in previous data, but not included in the new data
+        const removedCollections = productCollections.filter(
+            (id: string) => !collections.includes(id)
+        );
 
         // Update collections
-        await Promise.all([
+        await Promise.all(
             // Update added collections with this product
-            ...addedCollections.map((collectionId: string) =>
-                Collection.findByIdAndUpdate(collectionId, {
-                    $push: { products: product._id },
-                })
-            ),
+            addedCollections.map((collectionId: string) =>
+                Collection.findByIdAndUpdate(
+                    new mongoose.Types.ObjectId(collectionId),
+                    {
+                        $push: { products: product._id },
+                    },
+                    { new: true }
+                )
+            )
+        );
 
+        await Promise.all(
             // Update removed collections without this product
-            ...removedCollections.map((collectionId: string) =>
-                Collection.findByIdAndUpdate(collectionId, {
-                    $pull: { products: product._id },
-                })
-            ),
-        ]);
+            removedCollections.map((collectionId: string) =>
+                Collection.findByIdAndUpdate(
+                    new mongoose.Types.ObjectId(collectionId),
+                    {
+                        $pull: { products: product._id },
+                    },
+                    { new: true }
+                )
+            )
+        );
 
         // Update product
         const updatedProduct = await Product.findByIdAndUpdate(

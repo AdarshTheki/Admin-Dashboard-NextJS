@@ -200,7 +200,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                             name='price'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Price ($)</FormLabel>
+                                    <FormLabel>Price (Rs)</FormLabel>
                                     <FormControl>
                                         <Input
                                             type='number'
@@ -219,7 +219,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                             name='expense'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Expense ($)</FormLabel>
+                                    <FormLabel>Expense (Rs)</FormLabel>
                                     <FormControl>
                                         <Input
                                             type='number'
@@ -365,13 +365,13 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                         />
                     )}
                     <div className='flex gap-10'>
-                        <Button type='submit' className='bg-blue-1 hover:bg-blue-1/90 text-white'>
+                        <Button type='submit' className='bg-green-1 hover:bg-green-1/90 text-white'>
                             Submit
                         </Button>
                         <Button
                             type='button'
                             onClick={() => router.push('/products')}
-                            className='bg-blue-1 hover:bg-blue-1/90 text-white'>
+                            className='bg-red-1 hover:bg-red-1/90 text-white'>
                             Discard
                         </Button>
                     </div>

@@ -10,7 +10,7 @@ export const columns: ColumnDef<ProductType>[] = [
         accessorKey: 'title',
         header: 'Title',
         cell: ({ row }) => (
-            <Link href={`/products/${row.original._id}`} className='hover:text-blue-1'>
+            <Link href={`/products/${row.original._id}`} className='hover:text-blue-1 capitalize'>
                 {row.original.title}
             </Link>
         ),
@@ -26,13 +26,29 @@ export const columns: ColumnDef<ProductType>[] = [
     },
     {
         accessorKey: 'price',
-        header: 'Price ($)',
-        cell: ({ row }) => <p>{row.original?.price?.toFixed(2)}</p>,
+        header: 'Price (Rs)',
+        cell: ({ row }) => (
+            <p>
+                {row.original?.price?.toLocaleString('en-IN', {
+                    maximumFractionDigits: 0,
+                    style: 'currency',
+                    currency: 'INR',
+                })}
+            </p>
+        ),
     },
     {
         accessorKey: 'expense',
-        header: 'Expense ($)',
-        cell: ({ row }) => <p>{row.original?.expense?.toFixed(2)}</p>,
+        header: 'Expense (Rs)',
+        cell: ({ row }) => (
+            <p>
+                {row.original?.expense?.toLocaleString('en-IN', {
+                    maximumFractionDigits: 0,
+                    style: 'currency',
+                    currency: 'INR',
+                })}
+            </p>
+        ),
     },
     { id: 'actions', cell: ({ row }) => <Delete item='product' id={row.original._id} /> },
 ];

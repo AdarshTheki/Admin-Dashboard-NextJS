@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { UserButton } from '@clerk/nextjs';
+import { UserButton, useUser, SignInButton } from '@clerk/nextjs';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -14,11 +14,12 @@ import { navLinks } from '@/lib/constants';
 const TopBar = () => {
     const [dropdownMenu, setDropdownMenu] = useState(false);
     const pathname = usePathname();
+    const { isSignedIn } = useUser();
 
     return (
         <div>
             <div className='sticky top-0 z-20 w-full flex justify-between items-center px-8 py-4 bg-blue-2 shadow-xl lg:hidden'>
-                <Image src='/logo.png' alt='logo' width={150} height={70} />
+                <Image src='/logo.png' alt='logo' width={80} height={20} />
 
                 {/* Menu Links */}
                 <div className='flex gap-8 max-md:hidden'>
@@ -53,7 +54,13 @@ const TopBar = () => {
                         </div>
                     )}
                     {/* User Details */}
-                    <UserButton />
+                    {isSignedIn ? (
+                        <UserButton />
+                    ) : (
+                        <div className={`flex items-center justify-center w-fit text-green-1`}>
+                            <SignInButton />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

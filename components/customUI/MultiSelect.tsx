@@ -52,9 +52,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 
                 <CommandList>
                     {open && selectables.length !== 0 && (
-                        <CommandGroup
-                            heading='Suggestions'
-                            className=' max-h-[100px] overflow-auto'>
+                        <CommandGroup heading='Suggestions' className='max-h-[300px] overflow-auto'>
                             {selectables.map((item) => (
                                 <CommandItem
                                     key={item._id}

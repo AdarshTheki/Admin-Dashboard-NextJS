@@ -10,8 +10,8 @@ import { ToasterProvider } from '@/lib/ToasterProvider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Adarsh - Admin Dashboard',
-    description: "Admin dashboard to manage Adarsh's data",
+    title: 'Admin Dashboard',
+    description: "Admin Dashboard to Manage User's data",
 };
 
 export default function RootLayout({
@@ -24,9 +24,9 @@ export default function RootLayout({
             <html lang='en'>
                 <body className={inter.className}>
                     <div className='flex max-lg:flex-col text-grey-1'>
-                        <ToasterProvider/>
+                        <ToasterProvider />
                         <LeftSideBar />
-                        <TopBar/>
+                        <TopBar />
                         <div className='flex-1'>{children}</div>
                     </div>
                 </body>
