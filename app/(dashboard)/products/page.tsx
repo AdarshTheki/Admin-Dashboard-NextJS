@@ -12,28 +12,28 @@ import Loader from '@/components/customUI/Loader';
 import { columns } from '@/components/products/ProductColumns';
 
 const Products = () => {
-    const router = useRouter()
+    const router = useRouter();
 
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
     const [products, setProducts] = useState([]);
 
-    const fetchProducts = async () => {
-        try {
-            setLoading(true);
-            const res = await fetch('/api/products', { method: 'GET' });
-            const data = await res.json();
-            setProducts(data);
-        } catch (error) {
-            console.log('Product_GET', error);
-            toast.error('something went wrong! Please try Again.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
-        fetchProducts()
-    },[])
+        const fetchProducts = async () => {
+            try {
+                setLoading(true);
+                const res = await fetch(`/api/products?page=${page}`, { method: 'GET' });
+                const data = await res.json();
+                setProducts(data);
+            } catch (error) {
+                console.log('Product_GET', error);
+                toast.error('something went wrong! Please try Again.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProducts();
+    }, [page]);
 
     return loading ? (
         <Loader />
@@ -50,6 +50,22 @@ const Products = () => {
             </div>
             <Separator className='bg-grey-2 my-4' />
             <DataTable columns={columns} data={products} searchKey='title' />
+            <div className='flex items-center justify-center gap-5 py-5'>
+                {products.length > 19 && (
+                    <Button
+                        className='bg-grey-1 hover:bg-grey-1/80 text-white'
+                        onClick={() => setPage((prev: number) => prev + 1)}>
+                        Next Page
+                    </Button>
+                )}
+                {page > 1 && (
+                    <Button
+                        className='bg-grey-1 hover:bg-grey-1/80 text-white'
+                        onClick={() => setPage((prev: number) => prev - 1)}>
+                        Previous Page
+                    </Button>
+                )}
+            </div>
         </div>
     );
 };
