@@ -21,6 +21,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 allowed_countries: ['US', 'CA'],
             },
             shipping_options: [
+                { shipping_rate: 'shr_1PPsLdSEX6kzN9W0AFZOLmaK' },
+                { shipping_rate: 'shr_1PPsMlSEX6kzN9W063fCSUkm' },
                 { shipping_rate: 'shr_1PJwYJSEX6kzN9W07CeXP7cF' },
                 { shipping_rate: 'shr_1PJwXiSEX6kzN9W0q3rKZSWo' },
             ],

@@ -25,7 +25,7 @@ export const GET = async (req: NextRequest, { params }: { params: { collectionId
     } catch (error: any) {
         console.log('[Collections_GET]', error?.message);
         return new NextResponse(
-            JSON.stringify({ message: 'Internal Server Error', error: err.message }),
+            JSON.stringify({ message: 'Internal Server Error', error: error.message }),
             { status: 500 }
         );
     }
@@ -66,7 +66,7 @@ export const POST = async (req: NextRequest, { params }: { params: { collectionI
     } catch (error: any) {
         console.log('[Collections_POST]', error?.message);
         return new NextResponse(
-            JSON.stringify({ message: 'Internal Server Error', error: err.message }),
+            JSON.stringify({ message: 'Internal Server Error', error: error.message }),
             { status: 500 }
         );
     }
@@ -97,7 +97,7 @@ export const DELETE = async (
     } catch (error: any) {
         console.log('[Collections_DELETE]', error?.message);
         return new NextResponse(
-            JSON.stringify({ message: 'Internal Server Error', error: err.message }),
+            JSON.stringify({ message: 'Internal Server Error', error: error.message }),
             { status: 500 }
         );
     }
