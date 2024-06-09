@@ -86,7 +86,7 @@ export const POST = async (req: NextRequest, { params }: { params: { productId: 
 
         // included in previous data, but not included in the new data
         const removedCollections = product.collections.filter(
-            (id) => !collections.includes(id?.toString())
+            (id: any) => !collections.includes(id)
         );
 
         // Update collections
@@ -102,7 +102,7 @@ export const POST = async (req: NextRequest, { params }: { params: { productId: 
                 )
             ),
             // Update removed collections without this product
-            ...removedCollections.map((collectionId) =>
+            ...removedCollections.map((collectionId: any) =>
                 Collection.findByIdAndUpdate(
                     collectionId,
                     {
