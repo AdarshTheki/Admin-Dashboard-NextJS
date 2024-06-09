@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Collection from '@/models/Collection';
 import Product from '@/models/Product';
 import { connectToDB } from '@/lib/mongoDB';
+import { corsHeader } from '@/lib/constant';
 
 export const GET = async (req: NextRequest, { params }: { params: { collectionId: string } }) => {
     try {
@@ -20,17 +21,13 @@ export const GET = async (req: NextRequest, { params }: { params: { collectionId
             });
         }
 
-        return NextResponse.json(collection, {
-            status: 200,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET',
-                'Access-Control-Allow-Headers': 'Content-Type',
-            },
-        });
+        return NextResponse.json(collection, { status: 200, headers: corsHeader });
     } catch (error: any) {
         console.log('[Collections_GET]', error?.message);
-        return new NextResponse('Internal Server Error', { status: 500 });
+        return new NextResponse(
+            JSON.stringify({ message: 'Internal Server Error', error: err.message }),
+            { status: 500 }
+        );
     }
 };
 
@@ -51,7 +48,7 @@ export const POST = async (req: NextRequest, { params }: { params: { collectionI
 
         const { title, image, description } = await req.json();
 
-        if (!title || !image) {
+        if (!title || !image || !description) {
             return new NextResponse(JSON.stringify({ message: 'Title or Image are required' }), {
                 status: 401,
             });
@@ -63,10 +60,15 @@ export const POST = async (req: NextRequest, { params }: { params: { collectionI
             { new: true }
         );
 
-        return NextResponse.json(collection, { status: 200 });
+        return new NextResponse(JSON.stringify({ message: 'collection updated successfully' }), {
+            status: 200,
+        });
     } catch (error: any) {
         console.log('[Collections_POST]', error?.message);
-        return new NextResponse('Internal Server Error', { status: 500 });
+        return new NextResponse(
+            JSON.stringify({ message: 'Internal Server Error', error: err.message }),
+            { status: 500 }
+        );
     }
 };
 
@@ -76,7 +78,6 @@ export const DELETE = async (
 ) => {
     try {
         const { userId } = auth();
-
         if (!userId) {
             return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
         }
@@ -95,6 +96,9 @@ export const DELETE = async (
         });
     } catch (error: any) {
         console.log('[Collections_DELETE]', error?.message);
-        return new NextResponse('Internal Server Error', { status: 500 });
+        return new NextResponse(
+            JSON.stringify({ message: 'Internal Server Error', error: err.message }),
+            { status: 500 }
+        );
     }
 };

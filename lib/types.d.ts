@@ -10,14 +10,22 @@ type ProductType = {
     _id: string;
     title: string;
     description: string;
-    media: [string];
-    category: string;
     collections: [CollectionType];
-    tags: [string];
-    sizes: [string];
-    colors: [string];
+    media: [string];
+    thumbnail: string;
     price: number;
-    expense: number;
+    discount: number;
+    rating: number;
+    stock: number;
+    tags: [string];
+    category: string;
+    sku: string;
+    weight: number;
+    dimensions: {
+        width: number;
+        height: number;
+        depth: number;
+    };
     createdAt: Date;
     updatedAt: Date;
 };

@@ -1,13 +1,11 @@
-'use client'
-
-import ProductForm from "@/components/products/ProductForm"
+import ProductForm from '@/components/products/ProductForm';
 
 const CreateProduct = () => {
-  return (
-    <div>
-      <ProductForm/>
-    </div>
-  )
-}
+    return (
+        <div>
+            <ProductForm />
+        </div>
+    );
+};
 
-export default CreateProduct
+export default CreateProduct;

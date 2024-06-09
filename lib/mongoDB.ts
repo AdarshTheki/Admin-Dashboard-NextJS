@@ -11,17 +11,11 @@ export const connectToDB = async (): Promise<void> => {
     }
 
     try {
-        await mongoose.connect(process.env.MONGODB_URI + '/E-Commerce_Admin' || '');
+        await mongoose.connect(process.env.MONGODB_URI + '/E-Shopify-Admin' || '');
 
         isConnected = true;
         console.log('MongoDB is connected');
     } catch (err) {
         console.log(err);
     }
-};
-
-export const header = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };

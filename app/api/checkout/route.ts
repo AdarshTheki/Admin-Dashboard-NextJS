@@ -1,18 +1,9 @@
+import { corsHeader } from '@/lib/constant';
 import stripe from '@/lib/stripe';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function OPTIONS() {
-    return NextResponse.json(
-        {},
-        {
-            status: 200,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET',
-                'Access-Control-Allow-Headers': 'Content-Type',
-            },
-        }
-    );
+    return NextResponse.json({}, { status: 200, headers: corsHeader });
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -44,7 +35,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
                             ...(cartItem.color && { color: cartItem.color }),
                         },
                     },
-                    unit_amount: cartItem.item.price,
+                    unit_amount: cartItem.item.price * 100,
                 },
                 quantity: cartItem.quantity,
             })),
@@ -53,16 +44,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
             cancel_url: `${process.env.ECOMMERCE_STORE_URL}/cart`,
         });
 
-        return NextResponse.json(session, {
-            status: 200,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            },
-        });
+        return NextResponse.json(session, { status: 200, headers: corsHeader });
     } catch (err: any) {
         console.log('[checkout_POST]', err?.message);
-        return new NextResponse('Internal Server Error', { status: 500 });
+        return new NextResponse(
+            JSON.stringify({ message: 'Internal Server Error', error: err.message }),
+            { status: 500 }
+        );
     }
 }

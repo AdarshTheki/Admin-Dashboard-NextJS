@@ -1,24 +1,17 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { corsHeader } from '@/lib/constant';
 import { connectToDB } from '@/lib/mongoDB';
 import Product from '@/models/Product';
 import Collection from '@/models/Collection';
-
-// import { v2 as cloudinary } from 'cloudinary';
-
-// cloudinary.config({
-//     cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-//     api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-//     api_secret: process.env.CLOUDINARY_API_SECRET,
-// });
 
 export const POST = async (req: NextRequest) => {
     try {
         const { userId } = auth();
 
         if (!userId) {
-            return new NextResponse('Unauthorized', { status: 401 });
+            return new NextResponse('Unauthorized Request, Please Login...', { status: 401 });
         }
 
         await connectToDB();
@@ -26,33 +19,48 @@ export const POST = async (req: NextRequest) => {
         const {
             title,
             description,
-            media,
-            category,
             collections,
-            tags,
-            sizes,
-            colors,
+            media,
             price,
-            expense,
-        } = await req.json();
+            discount,
+            rating,
+            stock,
+            tags,
+            category,
+        }: ProductType = await req.json();
 
-        if (!title || !description || !media || !category || !price || !expense) {
-            return new NextResponse('Not enough data to create a product', {
-                status: 400,
-            });
+        if (
+            !title ||
+            !description ||
+            !category ||
+            !price ||
+            !discount ||
+            !rating ||
+            !stock ||
+            !media.length ||
+            !tags.length ||
+            !collections.length
+        ) {
+            return new NextResponse(
+                JSON.stringify({ message: 'Not enough data to create a product' }),
+                {
+                    status: 400,
+                }
+            );
         }
 
         const newProduct = await Product.create({
             title,
             description,
-            media,
-            category,
             collections,
-            tags,
-            sizes,
-            colors,
+            media,
+            thumbnail: media[0],
             price,
-            expense,
+            discount,
+            rating,
+            stock,
+            tags,
+            category,
         });
 
         await newProduct.save();
@@ -67,119 +75,77 @@ export const POST = async (req: NextRequest) => {
             }
         }
 
-        return NextResponse.json(newProduct, { status: 200 });
-    } catch (err) {
-        console.log('[products_POST]', err);
-        return new NextResponse('Internal Error', { status: 500 });
+        return new NextResponse(JSON.stringify({ message: 'Created New Product Successfully' }), {
+            status: 200,
+        });
+    } catch (err: any) {
+        console.log('[products_POST]', err.message);
+        return new NextResponse(
+            JSON.stringify({ message: 'Internal Server Error', error: err.message }),
+            { status: 500 }
+        );
     }
 };
 
 export const GET = async (req: NextRequest) => {
     try {
         const searchParams = req.nextUrl.searchParams;
-        const page = searchParams.get('page');
+        let skip = Number(searchParams.get('skip')) || 0;
+        let limit = Number(searchParams.get('limit')) || 20;
+        let sortBy = searchParams.get('sortBy') || 'createdAt';
+        let orderBy = searchParams.get('orderBy');
 
         await connectToDB();
 
-        const products = await Product.aggregate([
+        const products: any = await Product.aggregate([
             {
-                $lookup: {
-                    from: 'collections',
-                    localField: 'collections',
-                    foreignField: '_id',
-                    as: 'collectionsDetail',
+                $facet: {
+                    totals: [{ $count: 'count' }],
+                    items: [
+                        {
+                            $lookup: {
+                                from: 'collections',
+                                localField: 'collections',
+                                foreignField: '_id',
+                                as: 'collectionsDetail',
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                                title: 1,
+                                category: 1,
+                                expense: 1,
+                                price: 1,
+                                discount: 1,
+                                rating: 1,
+                                thumbnail: 1,
+                                collections: '$collectionsDetail.title',
+                            },
+                        },
+                        { $sort: { [sortBy]: orderBy === 'asc' ? 1 : -1 } },
+                        { $skip: skip },
+                        { $limit: limit },
+                    ],
                 },
             },
-            {
-                $unwind: '$media',
-            },
-            {
-                $project: {
-                    _id: 1,
-                    title: 1,
-                    expense: 1,
-                    category: 1,
-                    price: {
-                        $subtract: ['$expense', 99],
-                    },
-                    collections: '$collectionsDetail.title',
-                    media: 1,
-                },
-            },
-            { $sort: { createdAt: -1 } },
-            { $skip: (Number(page || 1) - 1) * 20 },
-            { $limit: 20 },
         ]);
 
-        // const products = await Product.find()
-        //     .sort({ createdAt: 'desc' });
-        // // .populate({ path: 'collections', model: Collection });
-
-        // const userId = 'user_2giVcBrphsuZvaPEDl2kpdD4VIx';
-
-        // const products = data.map(async (item) => {
-        //     const uploadMultiImag = async (images: string[]) => {
-        //         try {
-        //             if (images.length === 0) return [];
-        //             const uploadPromises = images.map(async (file) => {
-        //                 try {
-        //                     const uploadImage = await cloudinary.uploader.upload(file, {
-        //                         resource_type: 'image',
-        //                     });
-        //                     return uploadImage.secure_url;
-        //                 } catch (error) {
-        //                     return null;
-        //                 }
-        //             });
-        //             const urls = await Promise.all(uploadPromises);
-        //             const result = urls.filter((url) => url !== null);
-        //             return result;
-        //         } catch (error) {
-        //             return [];
-        //         }
-        //     };
-
-        //     const newMedia = await uploadMultiImag(item.media);
-
-        //     const newProduct = await Product.create({
-        //         ...item,
-        //         media: newMedia,
-        //     });
-
-        //     if (item.collections) {
-        //         for (const collectionId of item.collections) {
-        //             const collection = await Collection.findById(collectionId);
-        //             if (collection) {
-        //                 collection.products.push(newProduct._id);
-        //                 await collection.save();
-        //             }
-        //         }
-        //     }
-
-        //     await newProduct.save();
-
-        //     return newProduct;
-        // });
-
-        // const products = await Product.deleteMany({
-        //     category: 'mattress',
-        // });
-
-        // const products = await Product.find({
-        //     collections: { $in: [new mongoose.Types.ObjectId('665f55c84b8c43fa50443baf')] },
-        // }).countDocuments();
-
-        return NextResponse.json(products, {
-            status: 200,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, DELETE',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        return NextResponse.json(
+            {
+                products: products[0].items,
+                totals: products[0].totals[0].count,
+                limit,
+                skip,
             },
-        });
+            { status: 200, headers: corsHeader }
+        );
     } catch (err: any) {
         console.log('[products_GET]', err.message);
-        return new NextResponse('Internal Error', { status: 500 });
+        return new NextResponse(
+            JSON.stringify({ message: 'Internal Server Error', error: err.message }),
+            { status: 500 }
+        );
     }
 };
 

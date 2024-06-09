@@ -26,29 +26,20 @@ export const columns: ColumnDef<ProductType>[] = [
     },
     {
         accessorKey: 'price',
-        header: 'Price (Rs)',
+        header: 'Price ($)',
         cell: ({ row }) => (
             <p>
-                {row.original?.price?.toLocaleString('en-IN', {
-                    maximumFractionDigits: 0,
+                {row.original?.price?.toLocaleString('en-US', {
+                    maximumFractionDigits: 1,
                     style: 'currency',
-                    currency: 'INR',
+                    currency: 'USD',
                 })}
             </p>
         ),
     },
     {
-        accessorKey: 'expense',
-        header: 'Expense (Rs)',
-        cell: ({ row }) => (
-            <p>
-                {row.original?.expense?.toLocaleString('en-IN', {
-                    maximumFractionDigits: 0,
-                    style: 'currency',
-                    currency: 'INR',
-                })}
-            </p>
-        ),
+        accessorKey: 'discount',
+        header: 'Discount (%)',
     },
     { id: 'actions', cell: ({ row }) => <Delete item='product' id={row.original._id} /> },
 ];

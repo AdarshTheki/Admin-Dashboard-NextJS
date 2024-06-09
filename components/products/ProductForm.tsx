@@ -29,14 +29,14 @@ import MultiSelect from '../customUI/MultiSelect';
 const formSchema = z.object({
     title: z.string().min(2).max(30),
     description: z.string().min(2).max(500).trim(),
-    media: z.array(z.string()),
-    category: z.string(),
     collections: z.array(z.string()),
+    media: z.array(z.string()),
     tags: z.array(z.string()),
-    sizes: z.array(z.string()),
-    colors: z.array(z.string()),
-    price: z.coerce.number().min(0.1),
-    expense: z.coerce.number().min(0.1),
+    price: z.coerce.number().min(5),
+    discount: z.coerce.number().min(0.1).max(50),
+    rating: z.number().min(0).max(5),
+    stock: z.number().min(5).max(100),
+    category: z.string(),
 });
 
 interface ProductFormProps {
@@ -80,6 +80,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
         defaultValues: initialData
             ? {
                   ...initialData,
+                  price: Number(initialData.price || 10),
+                  discount: Number(initialData.discount || 2),
+                  rating: Number(initialData.rating || 4),
+                  stock: Number(initialData.stock || 10),
                   collections: initialData.collections.map((collection) => collection._id),
               }
             : {
@@ -88,11 +92,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                   category: '',
                   media: [],
                   collections: [],
-                  colors: [],
-                  sizes: [],
                   tags: [],
-                  expense: 0.1,
-                  price: 0.1,
+                  price: 10.5,
+                  discount: 6.8,
+                  rating: 5,
+                  stock: 20,
               },
     });
 
@@ -102,6 +106,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
             const url = initialData ? `/api/products/${initialData._id}` : '/api/products';
             const res = await fetch(url, {
                 method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(values),
             });
 
@@ -171,13 +176,16 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                             </FormItem>
                         )}
                     />
+
                     {/* Image Uploaded */}
                     <FormField
                         control={form.control}
                         name='media'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Multi-Image</FormLabel>
+                                <FormLabel>
+                                    Multi-Image <small>(Note: First image it will Thumbnail)</small>
+                                </FormLabel>
                                 <FormControl>
                                     <ImageUpload
                                         value={field.value}
@@ -200,7 +208,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                             name='price'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Price (Rs)</FormLabel>
+                                    <FormLabel>Price ($)</FormLabel>
                                     <FormControl>
                                         <Input
                                             type='number'
@@ -213,17 +221,53 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                                 </FormItem>
                             )}
                         />
-                        {/* Expense */}
+                        {/* Discount */}
                         <FormField
                             control={form.control}
-                            name='expense'
+                            name='discount'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Expense (Rs)</FormLabel>
+                                    <FormLabel>Discount ($)</FormLabel>
                                     <FormControl>
                                         <Input
                                             type='number'
-                                            placeholder='Expense'
+                                            placeholder='Discount'
+                                            {...field}
+                                            onKeyDown={handleKeyPress}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className='text-red-1 font-light' />
+                                </FormItem>
+                            )}
+                        />
+                        {/* rating */}
+                        <FormField
+                            control={form.control}
+                            name='rating'
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Rating</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type='number'
+                                            {...field}
+                                            onKeyDown={handleKeyPress}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className='text-red-1 font-light' />
+                                </FormItem>
+                            )}
+                        />
+                        {/* stock */}
+                        <FormField
+                            control={form.control}
+                            name='stock'
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Stock</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type='number'
                                             {...field}
                                             onKeyDown={handleKeyPress}
                                         />
@@ -268,61 +312,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                                                 field.onChange([
                                                     ...field.value.filter(
                                                         (tag) => tag !== tagToRemove
-                                                    ),
-                                                ])
-                                            }
-                                        />
-                                    </FormControl>
-                                    <FormMessage className='text-red-1 font-light' />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Colors */}
-                        <FormField
-                            control={form.control}
-                            name='colors'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Colors</FormLabel>
-                                    <FormControl>
-                                        <MultiText
-                                            placeholder='Colors'
-                                            value={field.value}
-                                            onChange={(color) =>
-                                                field.onChange([...field.value, color])
-                                            }
-                                            onRemove={(colorToRemove) =>
-                                                field.onChange([
-                                                    ...field.value.filter(
-                                                        (color) => color !== colorToRemove
-                                                    ),
-                                                ])
-                                            }
-                                        />
-                                    </FormControl>
-                                    <FormMessage className='text-red-1 font-light' />
-                                </FormItem>
-                            )}
-                        />
-                        {/* Sizes */}
-                        <FormField
-                            control={form.control}
-                            name='sizes'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Sizes</FormLabel>
-                                    <FormControl>
-                                        <MultiText
-                                            placeholder='Sizes'
-                                            value={field.value}
-                                            onChange={(size) =>
-                                                field.onChange([...field.value, size])
-                                            }
-                                            onRemove={(tagToRemove) =>
-                                                field.onChange([
-                                                    ...field.value.filter(
-                                                        (size) => size !== tagToRemove
                                                     ),
                                                 ])
                                             }

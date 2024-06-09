@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Collection from '@/models/Collection';
 import Product from '@/models/Product';
 import { connectToDB } from '@/lib/mongoDB';
-import mongoose, { ObjectId } from 'mongoose';
+import { corsHeader } from '@/lib/constant';
 
 export const GET = async (req: NextRequest, { params }: { params: { productId: string } }) => {
     try {
@@ -21,17 +21,13 @@ export const GET = async (req: NextRequest, { params }: { params: { productId: s
             });
         }
 
-        return NextResponse.json(product, {
-            status: 200,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET',
-                'Access-Control-Allow-Headers': 'Content-Type',
-            },
-        });
+        return NextResponse.json(product, { status: 200, headers: corsHeader });
     } catch (error: any) {
         console.log('[productId_GET]', error.message);
-        return new NextResponse('Internal Server Error', { status: 500 });
+        return new NextResponse(
+            JSON.stringify({ message: 'Internal Server Error', error: error.message }),
+            { status: 500 }
+        );
     }
 };
 
@@ -39,11 +35,15 @@ export const POST = async (req: NextRequest, { params }: { params: { productId: 
     try {
         const { userId } = auth();
         if (!userId) {
-            return new NextResponse('Unauthorized', { status: 401 });
+            return new NextResponse(
+                JSON.stringify({ message: 'Unauthorized Request, Please Login...' }),
+                { status: 401 }
+            );
         }
         await connectToDB();
 
         let product = await Product.findById(params.productId);
+
         if (!product) {
             return new NextResponse(JSON.stringify({ message: 'Product not found' }), {
                 status: 404,
@@ -53,61 +53,65 @@ export const POST = async (req: NextRequest, { params }: { params: { productId: 
         const {
             title,
             description,
-            media,
-            category,
             collections,
-            tags,
-            sizes,
-            colors,
+            media,
             price,
-            expense,
-        } = await req.json();
+            discount,
+            rating,
+            stock,
+            tags,
+            category,
+        }: ProductType = await req.json();
 
-        if (!title || !description || !media || !category || !price || !expense) {
-            return new NextResponse('Not enough data to create a new product', {
-                status: 400,
-            });
+        if (
+            !title ||
+            !description ||
+            !category ||
+            !price ||
+            !discount ||
+            !rating ||
+            !stock ||
+            !media.length ||
+            !tags.length ||
+            !collections.length
+        ) {
+            return new NextResponse(
+                JSON.stringify({ message: 'Not enough data to create a product' }),
+                { status: 400 }
+            );
         }
 
-        // convert object into string
-        const productCollections = product?.collections?.map((i: any) => i?.toString());
-
         // included in new data, but not included in the previous data
-        const addedCollections = collections.filter(
-            (id: string) => !productCollections.includes(id)
-        );
+        const addedCollections = collections.filter((id) => !product.collections.includes(id));
 
         // included in previous data, but not included in the new data
-        const removedCollections = productCollections.filter(
-            (id: string) => !collections.includes(id)
+        const removedCollections = product.collections.filter(
+            (id) => !collections.includes(id?.toString())
         );
 
         // Update collections
-        await Promise.all(
+        await Promise.all([
             // Update added collections with this product
-            addedCollections.map((collectionId: string) =>
+            ...addedCollections.map((collectionId) =>
                 Collection.findByIdAndUpdate(
-                    new mongoose.Types.ObjectId(collectionId),
+                    collectionId,
                     {
                         $push: { products: product._id },
                     },
                     { new: true }
                 )
-            )
-        );
-
-        await Promise.all(
+            ),
             // Update removed collections without this product
-            removedCollections.map((collectionId: string) =>
+            ...removedCollections.map((collectionId) =>
                 Collection.findByIdAndUpdate(
-                    new mongoose.Types.ObjectId(collectionId),
+                    collectionId,
                     {
                         $pull: { products: product._id },
                     },
                     { new: true }
                 )
-            )
-        );
+            ),
+        ]);
 
         // Update product
         const updatedProduct = await Product.findByIdAndUpdate(
@@ -115,33 +119,41 @@ export const POST = async (req: NextRequest, { params }: { params: { productId: 
             {
                 title,
                 description,
-                media,
-                category,
                 collections,
-                tags,
-                sizes,
-                colors,
+                media,
                 price,
-                expense,
+                discount,
+                rating,
+                stock,
+                tags,
+                category,
+                thumbnail: media[0],
             },
             { new: true }
-        ).populate({ path: 'collections', model: Collection });
+        );
 
         await updatedProduct.save();
 
-        return NextResponse.json(updatedProduct, { status: 200 });
-    } catch (error) {
-        console.log('[productId_POST]', error);
-        return new NextResponse('Internal Server Error', { status: 500 });
+        return new NextResponse(JSON.stringify({ message: 'product updated successfully' }), {
+            status: 200,
+        });
+    } catch (error: any) {
+        console.log('[productId_POST]', error.message);
+        return new NextResponse(
+            JSON.stringify({ message: 'Internal Server Error', error: error.message }),
+            { status: 500 }
+        );
     }
 };
 
 export const DELETE = async (req: NextRequest, { params }: { params: { productId: string } }) => {
     try {
         const { userId } = auth();
-
         if (!userId) {
-            return new NextResponse('Unauthorized', { status: 401 });
+            return new NextResponse(
+                JSON.stringify({ message: 'Unauthorized Request, Please Login...' }),
+                { status: 401 }
+            );
         }
 
         await connectToDB();
@@ -165,12 +177,15 @@ export const DELETE = async (req: NextRequest, { params }: { params: { productId
             )
         );
 
-        return new NextResponse(JSON.stringify({ message: 'Product deleted' }), {
+        return new NextResponse(JSON.stringify({ message: 'Product deleted Successfully' }), {
             status: 200,
         });
-    } catch (error) {
-        console.log('[product_DELETE]', error);
-        return new NextResponse('Internal Server Error', { status: 500 });
+    } catch (err: any) {
+        console.log('[product_DELETE]', err.message);
+        return new NextResponse(
+            JSON.stringify({ message: 'Internal Server Error', error: err.message }),
+            { status: 500 }
+        );
     }
 };
 

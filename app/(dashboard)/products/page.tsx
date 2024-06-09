@@ -15,16 +15,21 @@ const Products = () => {
     const router = useRouter();
 
     const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(1);
+    const [totals, setTotals] = useState(0);
+    const [limit, setLimit] = useState(20);
+    const [skip, setSkip] = useState(0);
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 setLoading(true);
-                const res = await fetch(`/api/products?page=${page}`, { method: 'GET' });
+                const res = await fetch(`/api/products?limit=${limit}&skip=${skip}`, {
+                    method: 'GET',
+                });
                 const data = await res.json();
-                setProducts(data);
+                setProducts(data.products);
+                setTotals(data.totals);
             } catch (error) {
                 console.log('Product_GET', error);
                 toast.error('something went wrong! Please try Again.');
@@ -33,7 +38,7 @@ const Products = () => {
             }
         };
         fetchProducts();
-    }, [page]);
+    }, [totals, limit, skip]);
 
     return loading ? (
         <Loader />
@@ -54,14 +59,14 @@ const Products = () => {
                 {products.length > 19 && (
                     <Button
                         className='bg-grey-1 hover:bg-grey-1/80 text-white'
-                        onClick={() => setPage((prev: number) => prev + 1)}>
+                        onClick={() => setSkip((prev: number) => prev + 1)}>
                         Next Page
                     </Button>
                 )}
-                {page > 1 && (
+                {skip > 1 && (
                     <Button
                         className='bg-grey-1 hover:bg-grey-1/80 text-white'
-                        onClick={() => setPage((prev: number) => prev - 1)}>
+                        onClick={() => setSkip((prev: number) => prev - 1)}>
                         Previous Page
                     </Button>
                 )}

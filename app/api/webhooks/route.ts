@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import stripe from '@/lib/stripe';
+
 import Customer from '@/models/Customer';
 import Order from '@/models/Order';
 import { connectToDB } from '@/lib/mongoDB';
-import stripe from '@/lib/stripe';
 
 export const POST = async (req: NextRequest) => {
     try {
@@ -10,7 +11,10 @@ export const POST = async (req: NextRequest) => {
         const signature = req.headers.get('stripe-signature') as string;
 
         if (!rawBody || !signature) {
-            return new NextResponse('Not enough data to text or headers', { status: 400 });
+            return new NextResponse(
+                JSON.stringify({ message: 'Not enough data to text or headers' }),
+                { status: 400 }
+            );
         }
 
         const event = stripe.webhooks.constructEvent(
@@ -76,12 +80,15 @@ export const POST = async (req: NextRequest) => {
 
             await customer.save();
 
-            return new NextResponse('Order created', { status: 200 });
+            return new NextResponse('Order created successfully', { status: 200 });
         } else {
             return new NextResponse('checkout session is incomplete', { status: 400 });
         }
     } catch (err: any) {
         console.log('[webhooks_POST]', err.message);
-        return new NextResponse('Failed to create the order', { status: 500 });
+        return new NextResponse(
+            JSON.stringify({ message: 'Failed to create the order', error: err.message }),
+            { status: 500 }
+        );
     }
 };

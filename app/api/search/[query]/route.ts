@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import Product from '@/models/Product';
 import { connectToDB } from '@/lib/mongoDB';
+import { corsHeader } from '@/lib/constant';
 
 export const GET = async (req: NextRequest, { params }: { params: { query: string } }) => {
     try {
@@ -15,17 +16,13 @@ export const GET = async (req: NextRequest, { params }: { params: { query: strin
             ],
         });
 
-        return NextResponse.json(searchProducts, {
-            status: 200,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET',
-                'Access-Control-Allow-Headers': 'Content-Type',
-            },
-        });
+        return NextResponse.json(searchProducts, { status: 200, headers: corsHeader });
     } catch (error: any) {
         console.log('[searchQuery_GET]', error.message);
-        return new NextResponse('Internal Server Error', { status: 500 });
+        return new NextResponse(
+            JSON.stringify({ message: 'Internal Server Error', error: error.message }),
+            { status: 500 }
+        );
     }
 };
 

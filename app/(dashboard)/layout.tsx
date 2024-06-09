@@ -10,8 +10,9 @@ import { ToasterProvider } from '@/lib/ToasterProvider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Admin Dashboard',
-    description: "Admin Dashboard to Manage User's data",
+    title: 'E-Shopify Admin Dashboard',
+    description:
+        'E-Shopify Admin Dashboard provides comprehensive tools to manage your online store efficiently. Monitor sales, manage inventory, and streamline operations with our intuitive dashboard.',
 };
 
 export default function RootLayout({

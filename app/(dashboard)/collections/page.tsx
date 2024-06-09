@@ -12,7 +12,6 @@ import Loader from '@/components/customUI/Loader';
 
 const Collections = () => {
     const router = useRouter();
-
     const [collection, setCollection] = useState([]);
     const [loading, setLoading] = useState(false);
 

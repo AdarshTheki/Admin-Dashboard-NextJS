@@ -17,30 +17,20 @@ export const getTotalCustomers = async () => {
     return totalCustomer;
 };
 
-export const getSalesPerMonth = async (date: string) => {
+export const getSalesPerMonth = async () => {
     await connectToDB();
     const orders = await Order.find();
-
-    let monthIndexDate = (id: string) =>
-        date === 'day' ? new Date(id).getDay() : new Date(id).getMonth();
-
-    let monthDate = (id: number) =>
-        date === 'day'
-            ? new Intl.DateTimeFormat('en-US', {
-                  weekday: 'short',
-              }).format(new Date(0, 0, id))
-            : new Intl.DateTimeFormat('en-US', {
-                  month: 'short',
-              }).format(new Date(0, id));
-
     const salesPerMonth = orders.reduce((acc, order) => {
-        const monthIndex = monthIndexDate(order.createdAt); // 0 for Janruary --> 11 for December
+        const monthIndex = new Date(order.createdAt).getMonth(); // 0 for Janruary --> 11 for December
         acc[monthIndex] = (acc[monthIndex] || 0) + order.totalAmount;
+        // For June
+        // acc[5] = (acc[5] || 0) + order.totalAmount (orders have monthIndex 5)
         return acc;
     }, {});
 
     const graphData = Array.from({ length: 12 }, (_, i) => {
-        const month = monthDate(i);
+        const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(new Date(0, i));
+        // if i === 5 => month = "Jun"
         return { name: month, sales: salesPerMonth[i] || 0 };
     });
 
