@@ -21,7 +21,7 @@ export const getSalesPerMonth = async () => {
     await connectToDB();
     const orders = await Order.find();
     const salesPerMonth = orders.reduce((acc, order) => {
-        const monthIndex = new Date(order.createdAt).getMonth(); // 0 for Janruary --> 11 for December
+        const monthIndex = new Date(order.createdAt).getMonth(); // 0 for January --> 11 for December
         acc[monthIndex] = (acc[monthIndex] || 0) + order.totalAmount;
         // For June
         // acc[5] = (acc[5] || 0) + order.totalAmount (orders have monthIndex 5)

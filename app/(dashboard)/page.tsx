@@ -6,10 +6,10 @@ import { getTotalSales, getSalesPerMonth, getTotalCustomers } from '@/lib/action
 import SalesChart from '@/components/customUI/SalesChart';
 
 export default async function Home() {
-    const totalRevenue = await getTotalSales().then((data:any) => data.totalRevenue);
-    const totalOrders = await getTotalSales().then((data:any) => data.totalOrders);
+    const totalRevenue = await getTotalSales().then((data: any) => data.totalRevenue);
+    const totalOrders = await getTotalSales().then((data: any) => data.totalOrders);
     const totalCustomers = await getTotalCustomers();
-    const graphData = await getSalesPerMonth('day');
+    const graphData = await getSalesPerMonth();
 
     return (
         <div className='sm:px-8 px-2 py-10'>
