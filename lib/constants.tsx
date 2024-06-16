@@ -1,4 +1,4 @@
-import { LayoutDashboard, Shapes, ShoppingBag, Tag, UsersRound } from 'lucide-react';
+import { LayoutDashboard, Shapes, ShoppingBag, Tag, Contact } from 'lucide-react';
 
 export const navLinks = [
     {
@@ -23,7 +23,7 @@ export const navLinks = [
     },
     {
         url: '/customers',
-        icon: <UsersRound />,
+        icon: <Contact />,
         label: 'Customers',
     },
 ];

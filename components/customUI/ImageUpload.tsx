@@ -19,15 +19,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, onRemove, value }) 
         <div>
             <div className='mb-4 flex flex-wrap items-center gap-4'>
                 {value.map((url) => (
-                    <div key={url} className='relative w-[200px] h-[200px]'>
-                        <div className='absolute top-1 right-1 z-10'>
-                            <Button
-                                onClick={() => onRemove(url)}
-                                type='button'
-                                className='bg-red-1 hover:bg-red-1/90 h-[40px] w-[40px] p-0 flex items-center rounded-full'>
-                                <Trash className='text-white font-bold h-5 w-5' />
-                            </Button>
-                        </div>
+                    <div key={url} className='relative w-[200px]'>
+                        <Button
+                            onClick={() => onRemove(url)}
+                            type='button'
+                            variant='destructive'
+                            className='absolute top-1 right-1 z-10 rounded-full'>
+                            <Trash className='text-white' />
+                        </Button>
                         <Image
                             src={url || '/placeholder.jpg'}
                             width={200}
@@ -42,10 +41,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, onRemove, value }) 
             <CldUploadWidget uploadPreset='dut55tpv' onUpload={onUpload}>
                 {({ open }) => {
                     return (
-                        <Button
-                            onClick={() => open()}
-                            type='button'
-                            className='bg-blue-1 hover:bg-blue-1/80 text-white'>
+                        <Button onClick={() => open()} type='button'>
                             <Plus className='h-4 w-4 mr-2' />
                             Upload Image
                         </Button>

@@ -354,13 +354,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                         />
                     )}
                     <div className='flex gap-10'>
-                        <Button type='submit' className='bg-green-1 hover:bg-green-1/90 text-white'>
-                            Submit
-                        </Button>
-                        <Button
-                            type='button'
-                            onClick={() => router.push('/products')}
-                            className='bg-red-1 hover:bg-red-1/90 text-white'>
+                        <Button type='submit'>Submit</Button>
+                        <Button variant={'destructive'} type='button' onClick={() => router.push('/products')}>
                             Discard
                         </Button>
                     </div>

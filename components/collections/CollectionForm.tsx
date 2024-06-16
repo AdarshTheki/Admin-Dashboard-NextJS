@@ -149,13 +149,11 @@ const CollectionForm: React.FC<CollectionFormProps> = ({ initialData }) => {
                         )}
                     />
                     <div className='flex gap-10'>
-                        <Button type='submit' className='bg-green-1 hover:bg-green-1/90 text-white'>
-                            Submit
-                        </Button>
+                        <Button type='submit'>Submit</Button>
                         <Button
                             type='button'
                             onClick={() => router.push('/collections')}
-                            className='bg-red-1 hover:bg-red-1/90 text-white'>
+                            variant='destructive'>
                             Discard
                         </Button>
                     </div>

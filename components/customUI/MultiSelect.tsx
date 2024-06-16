@@ -8,7 +8,6 @@ import {
     CommandList,
 } from '@/components/ui/command';
 import React, { useMemo, useState } from 'react';
-import { Badge } from '../ui/badge';
 import { X } from 'lucide-react';
 
 interface MultiSelectProps {
@@ -73,14 +72,16 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
             {selected.length !== 0 && (
                 <div className='flex flex-wrap gap-2'>
                     {selected.map((collection) => (
-                        <Badge key={collection._id} className='font-light'>
-                            {collection.title}
+                        <p
+                            key={collection._id}
+                            className='py-1 px-2 bg-blue-1 capitalize text-small-medium flex items-center rounded-lg text-white'>
+                            {collection.title?.toLowerCase()}
                             <span
-                                className='ml-1 hover:text-red-1 cursor-pointer'
+                                className='ml-1 rounded-full outline-none hover:bg-red-1 cursor-pointer px-1 py-1'
                                 onClick={() => onRemove(collection._id)}>
-                                <X className='h-4 w-4 font-extrabold' />
+                                <X className='h-4 w-4' />
                             </span>
-                        </Badge>
+                        </p>
                     ))}
                 </div>
             )}
