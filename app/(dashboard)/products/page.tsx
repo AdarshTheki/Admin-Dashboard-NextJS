@@ -46,9 +46,7 @@ const Products = () => {
         <div className='sm:px-8 px-2 py-10'>
             <div className='flex justify-between items-center'>
                 <p className='sm:text-heading2-bold text-heading3-bold'>Products</p>
-                <Button
-                    className=' bg-blue-1 hover:bg-blue-1/90 text-white'
-                    onClick={() => router.push('/products/new')}>
+                <Button onClick={() => router.push('/products/new')}>
                     <Plus className='mr-2' />
                     Create
                 </Button>
@@ -57,18 +55,10 @@ const Products = () => {
             <DataTable columns={columns} data={products} searchKey='title' />
             <div className='flex items-center justify-center gap-5 py-5'>
                 {products.length > 19 && (
-                    <Button
-                        className='bg-grey-1 hover:bg-grey-1/80 text-white'
-                        onClick={() => setSkip((prev: number) => prev + 1)}>
-                        Next Page
-                    </Button>
+                    <Button onClick={() => setSkip((prev: number) => prev + 1)}>Next</Button>
                 )}
                 {skip > 1 && (
-                    <Button
-                        className='bg-grey-1 hover:bg-grey-1/80 text-white'
-                        onClick={() => setSkip((prev: number) => prev - 1)}>
-                        Previous Page
-                    </Button>
+                    <Button onClick={() => setSkip((prev: number) => prev - 1)}>Previous</Button>
                 )}
             </div>
         </div>
