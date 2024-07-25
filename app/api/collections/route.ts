@@ -5,7 +5,7 @@ import { connectToDB } from '@/lib/mongoDB';
 import Collection from '@/models/Collection';
 import { corsHeader } from '@/lib/constant';
 
-export const POST = async (req: NextRequest) => {
+export async function POST(req: NextRequest) {
     try {
         const { userId } = auth();
 
@@ -16,23 +16,10 @@ export const POST = async (req: NextRequest) => {
             );
         }
 
+        const { title, description, image } = await req.json();
+
         await connectToDB();
 
-        const { title, description, image } = await req.json();
-        const existingCollection = await Collection.findOne({ title });
-
-        if (existingCollection) {
-            return new NextResponse(JSON.stringify({ message: 'Collection already exists' }), {
-                status: 400,
-            });
-        }
-
-        if (!title || !image || !description) {
-            return new NextResponse(
-                JSON.stringify({ message: 'Not enough data to create a collections' }),
-                { status: 400 }
-            );
-        }
         const newCollection = await Collection.create({ title, description, image });
 
         await newCollection.save();
@@ -47,7 +34,7 @@ export const POST = async (req: NextRequest) => {
             { status: 500 }
         );
     }
-};
+}
 
 export const GET = async () => {
     try {

@@ -12,7 +12,7 @@ export const columns: ColumnDef<CollectionType>[] = [
         cell: ({ row }) => (
             <Link
                 href={`/collections/${row.original._id}`}
-                className='hover:text-blue-1 capitalize'>
+                className='hover:text-blue-600 capitalize'>
                 {row.original.title}
             </Link>
         ),

@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import toast from 'react-hot-toast';
 import { Button } from '../ui/button';
+import { Trash2 } from 'lucide-react';
 
 interface DeleteProps {
     id: string;
@@ -45,9 +46,7 @@ const Delete: React.FC<DeleteProps> = ({ id, item }) => {
     return (
         <AlertDialog>
             <AlertDialogTrigger>
-                <Button type='button' variant='destructive'>
-                    Delete
-                </Button>
+                <Trash2 className='hover:text-red-1' />
             </AlertDialogTrigger>
             <AlertDialogContent className=' bg-white text-grey-1'>
                 <AlertDialogHeader>

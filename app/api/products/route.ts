@@ -37,9 +37,7 @@ export const POST = async (req: NextRequest) => {
             !discount ||
             !rating ||
             !stock ||
-            !media.length ||
-            !tags.length ||
-            !collections.length
+            !media.length
         ) {
             return new NextResponse(
                 JSON.stringify({ message: 'Not enough data to create a product' }),
@@ -65,7 +63,7 @@ export const POST = async (req: NextRequest) => {
 
         await newProduct.save();
 
-        if (collections) {
+        if (collections.length) {
             for (const collectionId of collections) {
                 const collection = await Collection.findById(collectionId);
                 if (collection) {
@@ -90,7 +88,7 @@ export const POST = async (req: NextRequest) => {
 export const GET = async (req: NextRequest) => {
     try {
         const searchParams = req.nextUrl.searchParams;
-        let skip = Number(searchParams.get('skip')) || 0;
+        let page = Number(searchParams.get('page')) || 1;
         let limit = Number(searchParams.get('limit')) || 20;
         let sortBy = searchParams.get('sortBy') || 'createdAt';
         let orderBy = searchParams.get('orderBy');
@@ -124,19 +122,23 @@ export const GET = async (req: NextRequest) => {
                             },
                         },
                         { $sort: { [sortBy]: orderBy === 'asc' ? 1 : -1 } },
-                        { $skip: skip },
+                        { $skip: (page - 1) * limit },
                         { $limit: limit },
                     ],
                 },
             },
         ]);
 
+        const totals = products[0].totals[0].count;
+        const totalPage = Math.ceil(totals / limit);
+
         return NextResponse.json(
             {
                 products: products[0].items,
-                totals: products[0].totals[0].count,
+                totalProduct: totals,
+                currentPage: page,
+                totalPage,
                 limit,
-                skip,
             },
             { status: 200, headers: corsHeader }
         );
