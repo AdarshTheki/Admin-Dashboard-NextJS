@@ -11,7 +11,7 @@ export const columns: ColumnDef<OrderItemType>[] = [
             return (
                 <Link
                     href={`/products/${row.original.product._id}`}
-                    className='hover:text-red-1 capitalize'>
+                    className='hover:text-blue-600 capitalize'>
                     {row.original.product.title}
                 </Link>
             );
