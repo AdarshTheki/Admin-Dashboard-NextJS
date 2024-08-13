@@ -10,17 +10,17 @@ export const GET = async (req: NextRequest) => {
     try {
         await connectToDB();
 
-        const orders = await Order.find().sort({ createdAt: -1 });
+        const orders = await Order.find().sort({ createdAt: -1 }).limit(20);
 
         const orderDetail = await Promise.all(
             orders.map(async (order) => {
                 const customer = await Customer.findOne({ clerkId: order.customerClerkId });
                 return {
-                    _id: order._id,
-                    customer: customer.name,
-                    products: order.products.length,
-                    totalAmount: order.totalAmount,
-                    createdAt: format(order.createdAt, 'MMM dd, yyyy'),
+                    _id: order?._id,
+                    customer: customer?.name || 'Guest',
+                    products: order?.products.length,
+                    totalAmount: order?.totalAmount,
+                    createdAt: format(order?.createdAt, 'MMM dd, yyyy'),
                 };
             })
         );
@@ -35,4 +35,4 @@ export const GET = async (req: NextRequest) => {
     }
 };
 
-export const dynamic = 'force-dynamic';
+// export const dynamic = 'force-dynamic';

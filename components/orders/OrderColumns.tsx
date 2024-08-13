@@ -20,8 +20,8 @@ export const columns: ColumnDef<OrderColumnType>[] = [
         header: 'Customer',
         cell: ({ row }) => {
             return (
-                <Link href={`/orders/${row.original._id}`} className='hover:text-blue-600'>
-                    {row.original.customer}
+                <Link href={`/orders/${row.original?._id}`} className='hover:text-blue-600'>
+                    {row.original?.customer}
                 </Link>
             );
         },

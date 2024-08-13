@@ -4,10 +4,13 @@ import { columns } from '@/components/customers/customerColumns';
 import Customer from '@/models/Customer';
 import { connectToDB } from '@/lib/mongoDB';
 
-const CustomerPage = async () => {
+export async function fetchCustomer() {
     await connectToDB();
-    const customers = await Customer.find().exec();
+    return await Customer.find({}).sort({ createdAt: -1 }).limit(10);
+}
 
+const CustomerPage = async () => {
+    const customers = await fetchCustomer();
     return (
         <div className='sm:px-8 px-2 py-10'>
             <p className='sm:text-heading2-bold text-heading3-bold'>Customers</p>
@@ -16,7 +19,5 @@ const CustomerPage = async () => {
         </div>
     );
 };
-
-export const dynamic = 'force-dynamic';
 
 export default CustomerPage;

@@ -19,13 +19,6 @@ type ProductType = {
     stock: number;
     tags: [string];
     category: string;
-    sku: string;
-    weight: number;
-    dimensions: {
-        width: number;
-        height: number;
-        depth: number;
-    };
     createdAt: Date;
     updatedAt: Date;
 };
@@ -39,6 +32,7 @@ type OrderColumnType = {
 };
 
 type OrderItemType = {
+    _id: string;
     product: ProductType;
     color: string;
     size: string;

@@ -45,8 +45,8 @@ export function DataTable<TData, TValue>({
     });
 
     return (
-        <div>
-            <div className='flex items-center py-4'>
+        <div className='relative'>
+            <div className='flex gap-2 items-center justify-between p-2 bg-white sticky top-0 z-10'>
                 <Input
                     placeholder='Search...'
                     value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
@@ -55,6 +55,7 @@ export function DataTable<TData, TValue>({
                     }
                     className='max-w-sm'
                 />
+                <p className='text-nowrap'>Totals: {data.length}</p>
             </div>
             <div>
                 <Table>
