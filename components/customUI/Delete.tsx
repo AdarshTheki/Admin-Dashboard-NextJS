@@ -12,7 +12,6 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import toast from 'react-hot-toast';
-import { Button } from '../ui/button';
 import { Trash2 } from 'lucide-react';
 
 interface DeleteProps {

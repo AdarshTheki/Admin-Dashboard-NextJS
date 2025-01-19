@@ -43,4 +43,25 @@ type CustomerType = {
     clerkId: string;
     name: string;
     email: string;
+    orders: [string];
+    createdAt: Date;
+};
+
+// Orders
+type AddressType = {
+    street: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+};
+
+type OrderType = {
+    _id: string;
+    customerClerkId: string;
+    products: [OrderItemType];
+    shippingAddress: AddressType;
+    shippingRate: string;
+    totalAmount: number;
+    createdAt: Date;
 };

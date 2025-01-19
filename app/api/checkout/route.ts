@@ -1,5 +1,5 @@
 import { corsHeader } from '@/lib/constant';
-import stripe from '@/lib/stripe';
+import stripe from '@/lib/payment/stripe';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function OPTIONS() {

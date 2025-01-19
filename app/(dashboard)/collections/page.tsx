@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
@@ -9,29 +8,13 @@ import { columns } from '@/components/collections/CollectionColumns';
 
 import { DataTable } from '@/components/customUI/DataTable';
 import Loader from '@/components/customUI/Loader';
+import useFetch from '@/components/hook/useFetch';
 
 const Collections = () => {
     const router = useRouter();
-    const [collection, setCollection] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const { data, loading, error } = useFetch<CollectionType[]>('/api/collections');
 
-    const getCollection = async () => {
-        setLoading(true);
-        try {
-            const res = await fetch('/api/collections', { method: 'GET' });
-            const data = await res.json();
-            setCollection(data);
-        } catch (error) {
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        getCollection();
-    }, []);
-
-    return loading ? (
+    return loading || error ? (
         <Loader />
     ) : (
         <div className='sm:px-8 px-2 py-10'>
@@ -43,7 +26,7 @@ const Collections = () => {
                 </Button>
             </div>
             <Separator className='bg-grey-2 my-4' />
-            <DataTable columns={columns} data={collection} searchKey='title' />
+            <DataTable columns={columns} data={data || []} searchKey='title' />
         </div>
     );
 };
