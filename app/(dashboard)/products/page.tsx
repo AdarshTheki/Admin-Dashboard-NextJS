@@ -31,7 +31,6 @@ const Products = () => {
         setHasMore(false); // Update hasMore based on API response
       }
     } catch (error) {
-      console.error('Error fetching products:', error);
       toast.error('Something went wrong! Please try again.');
     } finally {
       setLoading(false);
@@ -69,7 +68,12 @@ const Products = () => {
         </Button>
       </div>
 
-      <DataTable columns={columns} data={data} searchKey='title' />
+      <div className='max-md:hidden'>
+        <DataTable columns={columns} data={data} searchKey='title' />
+      </div>
+      <div className='grid grid-cols-2 sm:grid-cols-3 md:hidden sm:gap-4 gap-2'>
+        {data.length && data.map((item) => <ProductCart key={item._id} item={item} />)}
+      </div>
 
       {loading && <Loader />}
 
@@ -79,3 +83,23 @@ const Products = () => {
 };
 
 export default Products;
+
+const ProductCart = ({ item }: { item: ProductDataProp }) => {
+  return (
+    <div className='px-4 py-2 rounded-lg border bg-gray-50 space-y-4'>
+      <h2 className='md:text-base-medium'>{item.title}</h2>
+      <p className='bg-gray-300 px-4 py-1 rounded-2xl text-small-medium w-fit'>{item.category}</p>
+      {item.collections.length
+        ? item.collections.map((i) => (
+            <span key={i._id} className='px-3 py-1 bg-yellow-600 rounded-2xl'>
+              {i.title}
+            </span>
+          ))
+        : null}
+      <div className='flex justify-between'>
+        <p className='text-body-bold'>${item.price}</p>
+        <p className='text-green-600'>{item.discount}%</p>
+      </div>
+    </div>
+  );
+};
