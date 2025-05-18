@@ -1,5 +1,6 @@
 import Customer from '@/models/Customer';
 import Order from '@/models/Order';
+import Product from '@/models/Product';
 import { connectToDB } from '@/lib/mongoDB';
 
 export const getTotalSales = async () => {
@@ -8,6 +9,12 @@ export const getTotalSales = async () => {
   const totalOrders = orders.length;
   const totalRevenue = orders.reduce((acc, order) => acc + order.totalAmount, 0);
   return { totalOrders, totalRevenue };
+};
+
+export const getTotalProducts = async () => {
+  await connectToDB();
+  const products = await Product.countDocuments();
+  return products;
 };
 
 export const getTotalCustomers = async () => {
